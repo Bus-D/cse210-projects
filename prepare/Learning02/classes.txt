@@ -1,0 +1,15 @@
+Job
+_company: string
+_jobTitle: string
+_startYear: int
+_endYear: int
+______
+display: Void()
+
+Resume
+_name: string
+_job: List<Job>
+_____
+display: Void()
+
+
