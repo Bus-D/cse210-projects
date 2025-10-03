@@ -60,4 +60,7 @@ public class Fraction
         // Looked up syntax for rounding decimals
         return Math.Round((double)_top / (double)_bottom, 2);
     }
+
+
+    // 1 Nephi 1:1, Verse
 }
