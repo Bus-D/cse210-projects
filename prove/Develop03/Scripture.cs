@@ -33,7 +33,10 @@ public class Scripture
         string _verseText = Console.ReadLine();
 
         char[] delimiters = { ' ', ',', '.', ';', '!', '?' };
-        List<string> _words = _verseText.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Select(word => word.ToLower()).ToList();
+        _words = _verseText
+            .Split(delimiters, StringSplitOptions.RemoveEmptyEntries)
+            .Select(word => new Word(word.ToLower()))
+            .ToList();
     }
 
     // Gives number of words that needs to be hidden before the program ends
@@ -42,54 +45,45 @@ public class Scripture
         return _words.Count;
     }
 
-    // Hides random words: defaults to 3
-    public void HideRandomWords(int _variableName = 3)
+
+    public void HideRandomWords(int count)
     {
-        for (int i = 0; i < PEnd(); i++)
+        var availableWords = _words.Where(w => !w.IsHidden).ToList();
+        if (availableWords.Count == 0) return;
+
+        count = Math.Min(count, availableWords.Count);
+
+        for (int i = 0; i < count; i++)
         {
-            int randomIndex = _random.Next(0, _words.Count);
-
-            Word _word = _words[randomIndex];
-
-            if (!_word.GetHidden)
-            {
-                _word.IsHidden();
-            }
+            int randomIndex = _random.Next(0, availableWords.Count);
+            availableWords[randomIndex].Hide();
+            availableWords.RemoveAt(randomIndex);
         }
     }
-
-    // Adds the number of words hidden together, checks against the number of words in the scripture
     public int AddHidden()
     {
-
         int _hiddenCount = 0;
-
         foreach (Word _word in _words)
         {
-            _hiddenCount++;
+            if (_word.IsHidden)
+                _hiddenCount++;
         }
         return _hiddenCount;
     }
 
     // Ends program if all words are hidden
-    public bool AllWordsHidden(bool toggle)
+    public bool AllWordsHidden()
     {
-        if (AddHidden() == PEnd())
-        {
-            toggle = true;
-            return toggle;
-        }
-        return toggle;
+        return AddHidden() == PEnd();
     }
 
     public void Display()
     {
-        bool toggle = false;
-        
-        GetScripture();
-        PEnd();
-        AddHidden();
-        AllWordsHidden(toggle);
+        foreach (Word word in _words)
+        {
+            Console.Write(word.ReplaceWord() + " ");
+        }
+        Console.WriteLine();
     }
     
 }

@@ -4,24 +4,34 @@ class Program
 {
     static void Main(string[] args)
     {
+
+        Reference _reference = new Reference("", 0, 0, 0);
+        Scripture _scripture = new Scripture(_reference, "");
+
         Console.Clear();
-        string word = "";
-        int _chapter = 0;
-        int _verseStart = 0;
-        int _verseEnd = 0;
-        string _book = "";
-        string scripture = "";
-
-        Reference _reference = new Reference(_book, _chapter, _verseStart, _verseEnd);
-        Word _word = new Word(word);
-        Scripture _scripture = new Scripture(_reference, scripture);
-
         bool _quit = false;
+
+        Console.WriteLine("Welcome to the Scripture Memorizeor Program!");
+        _reference.IsReady();
+        _scripture.GetScripture();
 
         while (!_quit)
         {
-            _reference.IsReady();
+
+            _reference.DisplayRef();
             _scripture.Display();
+
+            Console.WriteLine("\nPress Enter to hide more words, or type quit to exit:");
+            string input = Console.ReadLine().Trim().ToLower();
+
+            if (input == "quit")
+            {
+                _quit = true;
+            }
+            else
+            {
+                _scripture.HideRandomWords(3);
+            }
         }
 
     }

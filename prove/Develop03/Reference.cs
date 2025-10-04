@@ -66,7 +66,6 @@ public class Reference
     // Display
     public void GetReference()
     {
-        Console.WriteLine("Welcome to the Scripture Memorizeor Program!");
 
         {
             Console.WriteLine("Please enter the book and chapter of the scripture you want to memorize. (ex. 1 Nephi 1)");
@@ -124,41 +123,38 @@ public class Reference
             if (IsAll)
             {
                 Console.WriteLine($"The reference is: {Book} {Chapter}: {VerseStart}-{VerseEnd}");
-                Console.WriteLine("Is this correct? Y/N");
-                string _correct = Console.ReadLine();
-                string _isCorrect = _correct.Trim().ToLower();
-
-                if (_isCorrect == "y")
-                {
-                    FullReference = $"{Book} {Chapter}: {VerseStart}-{VerseEnd}";
-                    _isReady = true;
-                }
-                else
-                {
-                    GetReference();
-                    return "";
-                }
             }
             else
             {
                 Console.WriteLine($"The reference is: {Book} {Chapter}: {VerseStart}");
-                Console.WriteLine("Is this correct? Y/N");
-                string _correct = Console.ReadLine();
-                string _isCorrect = _correct.Trim().ToLower();
+            }
 
-                if (_isCorrect == "y")
+            Console.WriteLine("Is this correct? Y/N");
+            string _isCorrect = Console.ReadLine().Trim().ToLower();
+
+            if (_isCorrect == "y")
+            {
+                if (IsAll)
                 {
-                    FullReference = $"{Book} {Chapter}: {VerseStart} ";
-                    _isReady = true;
+                    FullReference = $"{Book} {Chapter}:{VerseStart}-{VerseEnd}";
                 }
                 else
                 {
-                    GetReference();
-                    return "";
+                    FullReference = $"{Book} {Chapter}:{VerseStart} ";
                 }
+                _isReady = true;
             }
-            return "";
+            else
+            {
+                GetReference();
+            }
         }
+        return FullReference;
+    }
+
+    public string DisplayRef()
+    {
+        Console.Write(FullReference);
         return FullReference;
     }
 }

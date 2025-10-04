@@ -15,12 +15,13 @@ public class Word
         get { return _word; }
     }
 
-    public bool GetHidden
+    public bool IsHidden
     {
         get { return _isHidden; }
+        set { _isHidden = value; }
     }
 
-    public void IsHidden()
+    public void Hide()
     {
         _isHidden = true;
     }
@@ -32,13 +33,6 @@ public class Word
 
     public string ReplaceWord()
     {
-        if (_isHidden)
-        {
-            return new string('_', _word.Length);
-        }
-        else
-        {
-            return _word;
-        }
+        return _isHidden ? new string('_', _word.Length) : _word;
     }
 }
