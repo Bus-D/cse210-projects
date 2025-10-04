@@ -8,18 +8,22 @@ public class Scripture
     public Scripture(string _reference, string _scripture)
     {
 
+        this._reference = new Reference(_reference);
+
+        string[] _verseWords = _scripture.Split(" ");
+        int _randomNumber = _random.Next(_verseWords.Length);
     }
 
     // Displays scripture
     public void DisplayScripture()
     {
-
+        
     }
 
     // Gives number of words that needs to be hidden before the program ends
     public int PEnd()
     {
-        return _words.Count();
+        return _words.Count;
     }
 
     // Hides random words: defaults to 3
