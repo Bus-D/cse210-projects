@@ -10,23 +10,35 @@ public class Word
         _word = word;
     }
 
-    public string GetWord()
+    public string GetSetWord
     {
-        return _word;
+        get { return _word; }
     }
 
-    public void SetWord(string word)
+    public bool GetHidden
     {
-        _word = word;
+        get { return _isHidden; }
     }
 
-    public bool GetHidden()
-    {
-        return _isHidden;
-    }
-
-    public void HideWord()
+    public void IsHidden()
     {
         _isHidden = true;
+    }
+
+    public void Show()
+    {
+        _isHidden = false;
+    }
+
+    public string ReplaceWord()
+    {
+        if (_isHidden)
+        {
+            return new string('_', _word.Length);
+        }
+        else
+        {
+            return _word;
+        }
     }
 }
