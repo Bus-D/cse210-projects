@@ -1,4 +1,5 @@
 using System.Data;
+using System.Xml.Serialization;
 
 public class Activity
 {
@@ -64,7 +65,7 @@ public class Activity
         Random _random = new Random();
     }
 
-    protected void DisplayStart()
+    protected int DisplayStart()
     {
         Console.WriteLine("Welcome to the Mindfullness Program!");
         Console.WriteLine("Please select an activity. The instructions for each task will follow.");
@@ -75,6 +76,7 @@ public class Activity
         Console.Write("> ");
 
         Input = int.Parse(Console.ReadLine());
+        return Input;
     }
 
     protected void DisplayEnd()
@@ -84,12 +86,17 @@ public class Activity
 
     protected void PauseAnimation(int time)
     {
-        PauseSeconds = 5;
+        PauseSeconds = time;
         for (int i = time; i > 0; i--)
         {
             Console.Write($"\rCountdown: {i} ");
             Thread.Sleep(1000);
         }
         Console.WriteLine("\rTime's up! ");
+    }
+
+    public void RunActivity()
+    {
+  
     }
 }
