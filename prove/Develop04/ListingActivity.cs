@@ -8,9 +8,6 @@ public class ListingActivity : Activity
         "When have you felt the Holy Ghost this month?",
         "Who are some of your personal heroes?"
     };
-    string userInput;
-
-    private List<string> _inputs = new List<string> { };
 
     public ListingActivity(string StartMessage, string EndMessage, int RunTime) : base(StartMessage, EndMessage, RunTime)
     {
@@ -19,52 +16,40 @@ public class ListingActivity : Activity
         "Please enter the amount of time you wish to run the activity in seconds\n";
         Console.Write("> ");
 
+        EndMessage = $"Session Complete! Thank you for participating";
+    }
+
+    public void RunListing()
+    {
+        Console.WriteLine(base.StartMessage);
+        Console.Write("> ");
         RunTime = int.Parse(Console.ReadLine());
-
-        EndMessage = $"Session Complete! You wrote {_inputs.Count} number of thought(s).";
-    }
-
-    public void DisplayEntries()
-    {
-        foreach (string input in _inputs)
-        {
-            Console.WriteLine(_inputs);
-        }
-    }
-
-    public void KeepPrompting()
-    {
-        DateTime startTime = DateTime.Now;
+        Console.Clear();
 
         Random random = new Random();
-        int randomNumber = random.Next(0, _inputs.Count);
-        Console.WriteLine(base.StartMessage);
-        base.RunTime = int.Parse(Console.ReadLine());
+        string prompt = _prompts[random.Next(_prompts.Count)];
+        Console.WriteLine($"Prompt: {prompt}");
+        Console.WriteLine("You'll have a few seconds to think before you start");
+        PauseAnimation(3);
 
-        Console.WriteLine("Type 'exit' to quit before the timer is up");
-        Console.Write(_prompts[randomNumber]);
-        Console.Write("> ");
+        DateTime startTime = DateTime.Now;
+        List<string> responses = new List<string>();
+
+        Console.WriteLine("Start listing items (press Enter after each): ");
 
         while ((DateTime.Now - startTime).TotalSeconds < RunTime)
         {
-            int currentLineCursorTop = Console.CursorTop;
-            int currentLineCursorLeft = Console.CursorLeft;
+            Console.Write("> ");
+            string input = Console.ReadLine();
 
-            userInput = Console.ReadLine();
-
-            if (userInput.ToLower() == "exit")
+            if (!string.IsNullOrWhiteSpace(input))
             {
-                break;
+                responses.Add(input);
             }
-
-            _inputs.Add(userInput);
-
-            Console.SetCursorPosition(0, currentLineCursorTop);
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, currentLineCursorTop);
         }
 
-        Console.WriteLine(base.EndMessage);
+        Console.WriteLine($"\nYou listed {responses.Count} item(s)!");
+        Console.WriteLine(EndMessage);
     }
 
 }

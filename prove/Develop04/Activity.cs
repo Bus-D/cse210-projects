@@ -65,7 +65,7 @@ public class Activity
         Random _random = new Random();
     }
 
-    protected int DisplayStart()
+    public int DisplayStart()
     {
         Console.WriteLine("Welcome to the Mindfullness Program!");
         Console.WriteLine("Please select an activity. The instructions for each task will follow.");
@@ -79,12 +79,12 @@ public class Activity
         return Input;
     }
 
-    protected void DisplayEnd()
+    public void DisplayEnd()
     {
         Console.WriteLine(EndMessage);
     }
 
-    protected void PauseAnimation(int time)
+    public void PauseAnimation(int time)
     {
         PauseSeconds = time;
         for (int i = time; i > 0; i--)

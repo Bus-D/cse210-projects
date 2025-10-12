@@ -29,44 +29,23 @@ public class ReflectionActivity : Activity
         "In this activity you will be given the opportunity to enter an amount of time you want to relfect.\n" +
         "You will then be given a prompt followed by questions to help you reflect on the prompt.\n" +
         "Please enter the amount of time you wish to run the activity.\n";
-        Console.WriteLine("> ");
 
-        runTime = int.Parse(Console.ReadLine());
-
-        endMessage = "Thank you for reflecting today. We recommend writing down your reflections if you have the chance.";
+        endMessage = "Thank you for reflecting today.";
     }
 
-    public void ShowPrompt()
+    public void SpinnerAnimation(int seconds)
     {
+        DateTime endTime = DateTime.Now.AddSeconds(seconds);
 
-        Random random = new Random();
-        int randomPrompt = random.Next(0, _prompts.Count);
-
-        Console.WriteLine(randomPrompt);
-    }
-
-    public void ShowQuestion()
-    {
-        Random random = new Random();
-        int randomQuestion = random.Next(0, _reflectionQuestion.Count);
-
-        Console.WriteLine(randomQuestion);
-    }
-
-    public void SpinnerAnimation()
-    {
-        var originalX = Console.CursorLeft;
-        var origianlY = Console.CursorTop;
-
-        Console.Write(spinnerAnimationFrames[currentAnimationFrame]);
-
-        currentAnimationFrame++;
-        if (currentAnimationFrame == spinnerAnimationFrames.Length)
+        while (DateTime.Now < endTime)
         {
-            currentAnimationFrame = 0;
+            foreach (char c in spinnerAnimationFrames)
+            {
+                Console.Write($"\r{c}");
+                Thread.Sleep(200);
+            }
         }
-
-        Console.SetCursorPosition(originalX, origianlY);
+        Console.Write("\r");
     }
     
     public void RunReflection()
@@ -74,19 +53,23 @@ public class ReflectionActivity : Activity
         DateTime startTime = DateTime.Now;
 
         Console.WriteLine(base.StartMessage);
-        base.RunTime = int.Parse(Console.ReadLine());
+        Console.Write("> ");
+        RunTime = int.Parse(Console.ReadLine());
+        Console.Clear();
 
-        ShowPrompt();
+        Random random = new Random();
+        string prompt = _prompts[random.Next(_prompts.Count)];
+        Console.WriteLine($"Prompt: \n> {prompt}\n");
+        Console.WriteLine("Reflecting on this... get ready...");
+        SpinnerAnimation(3);
 
         while ((DateTime.Now - startTime).TotalSeconds < RunTime)
         {
-            var originalX = Console.CursorLeft;
-            var origianlY = Console.CursorTop;
-
-            Console.SetCursorPosition(0, origianlY);
-            Console.Write(new string(' ', Console.WindowWidth));
-            SpinnerAnimation();
-            
+            string quesiton = _reflectionQuestion[random.Next(_reflectionQuestion.Count)];
+            Console.WriteLine($"\n{quesiton}");
+            SpinnerAnimation(5);
         }
+
+        Console.WriteLine("\n" + EndMessage);
     }
 }
