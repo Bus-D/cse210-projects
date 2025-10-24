@@ -2,12 +2,12 @@ using System.Diagnostics.Metrics;
 
 public class Goal
 {
-    protected static List<Goal> _goals = new List<Goal>();
+    
     private string _goalType;
     private string _goalName;
     private string _goalInfo;
     private int _goalPoints;
-    private static int _totalPoints;
+    public int _totalPoints;
     private string _filePath;
     public bool _complete;
 
@@ -50,67 +50,7 @@ public class Goal
         _goalPoints = points;
     }
 
-    public virtual string CreateGoal()
-    {
-        bool typeChosen = false;
-        
-        Console.WriteLine("Which type of Goal would you like to create?");
-        Console.WriteLine("1. Simple Goal");
-        Console.WriteLine("2. Eternal Goal");
-        Console.WriteLine("3. Checklist Goal");
-        Console.Write("> ");
-        int choice = int.Parse(Console.ReadLine());
-
-        Goal newGoal = null;
-
-        while (!typeChosen)
-        {
-            if (choice == 1)
-            {
-                newGoal = new SimpleGoal();
-                _goalType = "Simple Goal";
-                typeChosen = true;
-            }
-            else if (choice == 2)
-            {
-                newGoal = new EternalGoal();
-                _goalType = "Eternal Goal";
-                typeChosen = true;
-            }
-            else if (choice == 3)
-            {
-                newGoal = new CheckListGoal();
-                _goalType = "ChecklistGoal";
-                typeChosen = true;
-            }
-            else
-            {
-                Console.WriteLine("Invalid Choice. Please Choose the type of goal");
-            }
-
-            if (newGoal != null)
-            {
-                if (newGoal is CheckListGoal checkGoal)
-                {
-                    checkGoal.CreateGoal(); // sets properties on the object
-                }
-                else
-                {
-                    newGoal.CreateGoal(); // Simple or Eternal goals
-                }
-
-                _goals.Add(newGoal);
-            }
-        }
-        return "";
-    }
-
-    public void StartCreation()
-    {
-        CreateGoal();
-    }
-
-    public void SaveGoal()
+    public void SaveGoal(List<Goal> _goals)
     {
         char[] delimiters = { '.' };
         string[] excludedExtensions = { ".cs", ".csproj" };
@@ -224,7 +164,7 @@ public class Goal
         }
     }
 
-public void LoadGoals()
+public void LoadGoals(List<Goal> _goals)
 {
     string folderPath = @"C:\Users\brand\OneDrive - BYU-Idaho\School Work\Fall 2025\cse 210\cse210-projects\prove\Develop05";
     string[] excludedExtensions = { ".cs", ".csproj" };
@@ -293,14 +233,14 @@ public void LoadGoals()
             switch (goalType)
             {
                 case "Simple Goal":
-                    goal = new SimpleGoal(name, info, points, complete);
+                    goal = new SimpleGoal(goalType, name, info, points, complete);
                     break;
                 case "Eternal Goal":
-                    goal = new EternalGoal(name, info, points);
+                    goal = new EternalGoal(goalType, name, info, points);
                     goal._complete = complete;
                     break;
-                case "ChecklistGoal":
-                    goal = new CheckListGoal(name, info, points, complete, goalAmount, completedTimes, extraPoints);
+                case "Checklist Goal":
+                    goal = new CheckListGoal(goalType, name, info, points, complete, goalAmount, completedTimes, extraPoints);
                     break;
             }
 
@@ -324,47 +264,55 @@ public void LoadGoals()
 }
 
 
-
-    public virtual void DisplayGoals()
+    public virtual string GetDisplayString()
+    {
+        string checkbox = _complete ? "[X]" : "[ ]";
+        return $"{checkbox} {GoalName} ({GoalInfo}) Points: {GoalPoints}";
+    }
+    public virtual void DisplayGoals(List<Goal> _goals)
     {
         int counter = 1;
         if (_goals.Count == 0)
         {
-            Console.WriteLine("No entries yet.\n");
+            Console.WriteLine("No goals to display.\n");
+            return;
+        }
+
+        Console.WriteLine($"Total Points: {_totalPoints}");  
+        foreach (Goal g in _goals)
+        {
+            Console.WriteLine($"{counter}. {g.GetDisplayString()}");
+            counter++;
+        }
+    }
+
+    public virtual void RecordEvent(List<Goal> _goals)
+    {
+        if (_goals.Count == 0)
+        {
+            Console.WriteLine("No goals yet.");
             return;
         }
         else
         {
-            Console.WriteLine($"Total Points: {_totalPoints}");
-
-            foreach (Goal goal in _goals)
+            Console.WriteLine("Select a goal to record progress: \n");
+            for (int i = 0; i < _goals.Count; i++)
             {
-                string checkbox = goal._complete ? "[X]" : "[ ]";
-                Console.WriteLine($"{counter}. {checkbox} {goal.GoalName} ({goal.GoalInfo}) Points: {goal.GoalPoints}");
-                counter++;
+                Goal g = _goals[i];
+                string checkbox = g._complete ? "[X]" : "[ ]";
+                Console.WriteLine($"{i + 1}. {checkbox} {g.GoalName} ({g.GoalInfo})");
             }
 
+            int choice = int.Parse(Console.ReadLine());
+
+            if (choice >= 1 && choice <= _goals.Count)
+            {
+                _goals[choice - 1].RecordEvent(_goals);
+            }
         }
     }
 
-    public virtual void RecordEvent()
-    {
-        DisplayGoals();
-
-        Console.WriteLine("What goal would you like to record?");
-        int goalChoice = int.Parse(Console.ReadLine());
-
-        if (goalChoice >= 1 && goalChoice <= _goals.Count)
-        {
-            Goal selectedGoal = _goals[goalChoice - 1];
-            selectedGoal._complete = true;
-            AddPoints(selectedGoal);
-        }
-
-        DisplayGoals();
-    }
-
-    protected virtual void AddPoints(Goal selectedGoal)
+    public virtual void AddPoints(Goal selectedGoal, bool complete)
     {
         if (selectedGoal != null && selectedGoal._complete)
         {

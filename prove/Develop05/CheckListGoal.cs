@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.SqlTypes;
+
 public class CheckListGoal : Goal
 {
     public int goalAmount = 0;
@@ -6,9 +9,10 @@ public class CheckListGoal : Goal
 
     public CheckListGoal() { }
 
-public CheckListGoal(string name, string info, int points, bool complete, int goalAmount, int completedTimes, int extraPoints) 
+public CheckListGoal(string type, string name, string info, int points, bool complete, int goalAmount, int completedTimes, int extraPoints) 
     : base(name, info, points)
 {
+    string _goalType = type;
     GoalName = name;
     GoalInfo = info;
     GoalPoints = points;
@@ -18,88 +22,75 @@ public CheckListGoal(string name, string info, int points, bool complete, int go
     this.extraPoints = extraPoints;
 }
 
-
-    public override string CreateGoal()
+    public override string GetDisplayString()
     {
-        GoalType = "CheckList Goal";
-
-        Console.WriteLine("What is the name of your goal?");
-        Console.Write("> ");
-        this.GoalName = Console.ReadLine();
-
-        Console.WriteLine("What is a short description of it?");
-        Console.Write("> ");
-        this.GoalInfo = Console.ReadLine();
-
-        Console.WriteLine("How many points is it worth?");
-        Console.Write("> ");
-        this.GoalPoints = int.Parse(Console.ReadLine());
-
-        Console.WriteLine("How many times do you want to complete the goal?");
-        Console.Write("> ");
-        this.goalAmount = int.Parse(Console.ReadLine());
-
-        Console.WriteLine("How many extra points when you finish the goal?");
-        Console.Write("> ");
-        this.extraPoints = int.Parse(Console.ReadLine());
-
-        string wholeGoal = $"{this.GoalType},{this.GoalName},{this.GoalInfo},{this.GoalPoints},{this._complete},{this.completedTimes},{this.goalAmount},{this.extraPoints}";
-        return wholeGoal;
+        string checkbox = _complete ? "[X]" : "[ ]";
+        return $"{checkbox} {GoalName} ({GoalInfo}) Points: {GoalPoints} Progress: {completedTimes}/{goalAmount}";
     }
 
-    public override void DisplayGoals()
+    public override void DisplayGoals(List<Goal> _goals)
     {
         int counter = 1;
         if (_goals.Count == 0)
         {
-            Console.WriteLine("No entries yet.\n");
+            Console.WriteLine("No goals to display.\n");
             return;
         }
 
-        foreach (Goal goal in _goals)
+        Console.WriteLine($"Total Points: {_totalPoints}");  
+        foreach (Goal g in _goals)
         {
-            string checkbox = goal._complete ? "[X]" : "[ ]";
-
-            Console.WriteLine($"{counter}. {checkbox} {goal.GoalName} ({goal.GoalInfo}) Points: {goal.GoalPoints} {completedTimes}/{goalAmount}");
-
+            Console.WriteLine($"{counter}. {g.GetDisplayString()}");
             counter++;
         }
-
-        Console.WriteLine($"Total Points: {TotalPoints}");
     }
 
-    public override void RecordEvent()
+    public override void RecordEvent(List<Goal> _goals)
     {
-        DisplayGoals();
-
-        Console.WriteLine("What goal would you like to record?");
-        int goalChoice = int.Parse(Console.ReadLine());
-
-        if (goalChoice >= 1 && goalChoice <= _goals.Count)
+        if (_goals.Count == 0)
         {
-            if (_goals[goalChoice - 1] is CheckListGoal selectedGoal)
+            Console.WriteLine("No goals yet.");
+            return;
+        }
+        else
+        {
+            Console.WriteLine("Select a goal to record progress: \n");
+            for (int i = 0; i < _goals.Count; i++)
             {
-                if (selectedGoal.completedTimes < selectedGoal.goalAmount)
-                {
-                    selectedGoal.completedTimes++;
-                    AddPoints(selectedGoal);
-                }
-                else
-                {
-                    selectedGoal._complete = true;
-                    AddPoints(selectedGoal);
-                }
+                Goal g = _goals[i];
+                string checkbox = g._complete ? "[X]" : "[ ]";
+                Console.WriteLine($"{i + 1}. {checkbox} {g.GoalName} ({g.GoalInfo}) {GoalPoints} Progress: {completedTimes}/{goalAmount}");
+            }
+
+            int choice = int.Parse(Console.ReadLine());
+
+            if (choice >= 1 && choice <= _goals.Count)
+            {
+                _goals[choice - 1].RecordEvent(_goals);
+            }
+
+            if (completedTimes >= goalAmount)
+            {
+                _complete = true;
+                TotalPoints += extraPoints;
+                Console.WriteLine($"You earned {extraPoints} points!");
+            }
+            else
+            {
+                completedTimes++;
+                TotalPoints += GoalPoints;
+                Console.WriteLine($"You earned {GoalPoints} points!");
             }
         }
     }
 
-    protected void AddPoints(CheckListGoal goal)
+    public override void AddPoints(Goal goal, bool isComplete)
     {
         TotalPoints += goal.GoalPoints;
 
-        if (goal.completedTimes == goal.goalAmount)
+        if (isComplete && completedTimes == goalAmount)
         {
-            TotalPoints += goal.extraPoints;
+            TotalPoints += extraPoints;
         }
     }
 }
