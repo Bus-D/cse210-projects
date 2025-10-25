@@ -1,7 +1,6 @@
 class Order
 {
     private List<Product> _products = new List<Product>();
-    private Product product;
     private Customer _customer;
 
     public Order(Customer customer)
@@ -14,14 +13,20 @@ class Order
         _products.Add(product);
     }
 
-    public void GetPackingLabel()
+    public string GetPackingLabel()
     {
-        Console.WriteLine($"Product Name: {product.GetName}\nProduct ID: {product.GetId}");
+        string label = "";
+
+        foreach (Product p in _products)
+        {
+            label += $"Product ID: {p.GetId} Product Name: {p.GetName}\n";
+        }
+        return label;
     }
 
-    public void GetShippingLabel()
+    public string GetShippingLabel()
     {
-        Console.WriteLine($"Name: {_customer.GetCustomerName}\nAddress: {_customer.GetAddress}");
+        return $"Name: {_customer.GetCustomerName}\nAddress: {_customer.GetAddress()}";
     }
     
     public string GetTotalPrice()
@@ -29,13 +34,18 @@ class Order
         bool usa = _customer.LivesInUSA();
         double totalPrice = 0;
 
+        foreach (Product p in _products)
+        {
+            totalPrice += p.GetTotalCost();
+        }
+
         if (usa)
         {
-            totalPrice = product.GetTotalCost() + 5;
+            totalPrice += 5;
         }
         else
         {
-            totalPrice = product.GetTotalCost() + 35;
+            totalPrice += 35;
         }
 
         return $"${totalPrice}";
