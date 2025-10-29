@@ -1,10 +1,10 @@
 abstract class Activity
 {
   protected string _date;
-  protected int _lengthMinutes;
+  protected double _lengthMinutes;
   protected string _type;
 
-  public Activity(string date, int minutes, string type)
+  public Activity(string date, double minutes, string type)
   {
     _date = date;
     _lengthMinutes = minutes;
