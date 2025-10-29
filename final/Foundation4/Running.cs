@@ -15,16 +15,16 @@ class Running : Activity
   }
   protected override double GetPace()
   {
-    return Minutes / _distance;
+    return _lengthMinutes / _distance;
   }
 
   protected override double GetSpeed()
   {
-    return (_distance * Minutes) * 60;
+    return (_distance / _lengthMinutes) * 60;
   }
 
   public override string GetSummary()
   {
-    return $"{Date} {Type} ({Minutes}) - Distance {GetDistance()} miles, Speed {GetSpeed()} mph, Pace: {GetPace()} min/mile";
+    return $"{_date} {_type} ({_lengthMinutes}) - Distance {GetDistance()} km, Speed {GetSpeed()} kmph, Pace: {GetPace()} min/km";
   }
 }
